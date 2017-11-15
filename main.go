@@ -13,6 +13,8 @@ func main()  {
 	{
 		vi.GET("/", controller.ListBooks)
 		vi.GET("/:id", controller.GetBook)
+		vi.GET("/:id/authors", controller.GetBookAuthors)
+		vi.POST("/:id/authors", controller.AddBookAuthor)
 		vi.POST("/", controller.CreateBook)
 		vi.PUT("/:id", controller.UpdateBook)
 		vi.DELETE("/:id", controller.DeleteBook)

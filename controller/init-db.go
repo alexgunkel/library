@@ -19,6 +19,7 @@ var db *gorm.DB
 
 func init() {
 	db = getDatabase()
+	db.LogMode(true)
 	db.AutoMigrate(&models.Book{})
 	db.AutoMigrate(&models.Author{})
 }
