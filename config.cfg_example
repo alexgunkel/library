@@ -1,0 +1,5 @@
+; Copy this file to config.cfg and add your database configuration below
+[database]
+username=mysql-user
+password=mysql-password
+database=mysql-database
