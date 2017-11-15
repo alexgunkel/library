@@ -1,4 +1,4 @@
-package controller
+package repository
 
 import (
 	"github.com/jinzhu/gorm"

@@ -4,21 +4,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/alexgunkel/library/models"
+	"github.com/alexgunkel/library/repository"
+	"strconv"
 )
 
 func CreateBook(c *gin.Context)  {
-	book := models.Book{Title: c.PostForm("title"), Subtitle: c.PostForm("subtitle"), Identifier: c.PostForm("identifier")}
-	db.Save(&book)
+	var book models.Book
+	c.Bind(&book)
+	repository.AddBook(&book)
+
 	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "Book item created successfully!", "data": book})
 }
 
 func ListBooks(c *gin.Context)  {
-	var books []models.Book
-
-	db.Find(&books)
-
-	if len(books) <= 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No books found."})
+	books, err := repository.GetBooks()
+	if nil != err {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
 		return
 	}
 
@@ -26,12 +27,11 @@ func ListBooks(c *gin.Context)  {
 }
 
 func GetBook(c *gin.Context)  {
-	var book models.Book
-	bookid := c.Param("id")
-	db.First(&book, bookid)
+	bookid := getId(c)
+	book, err := repository.GetBookById(bookid)
 
-	if book.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "Could not find book"})
+	if nil != err {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
 		return
 	}
 
@@ -39,65 +39,47 @@ func GetBook(c *gin.Context)  {
 }
 
 func GetBookAuthors(c *gin.Context)  {
-	var book models.Book
-	var authors []models.Author
-	bookid := c.Param("id")
-	db.First(&book, bookid)
+	bookid := getId(c)
+	authors, err := repository.GetBookAuthors(bookid)
 
-	if book.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "Could not find book"})
+	if nil != err {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
 		return
 	}
-
-
-	db.Model(&book).Related(&authors, "Authors")
 
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &authors})
 }
 
 func AddBookAuthor(c *gin.Context) {
-	var book models.Book
 	var author models.Author
+	c.Bind(&author)
+	bookid := getId(c)
 
-	bookId := c.Param("id")
-	db.First(&book, bookId)
+	err := repository.AddAuthor(bookid, &author)
 
-	if book.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "Could not find book"})
+	if nil != err {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
 		return
 	}
-	
-	author = models.Author{FirstName: c.PostForm("first_name"), LastName: c.PostForm("last_name")}
-
-	db.Model(&book).Association("authors").Append(&author)
 }
 
 func UpdateBook(c *gin.Context)  {
+	bookid := getId(c)
 	var book models.Book
-	bookid := c.Param("id")
-	db.First(&book, bookid)
+	c.Bind(&book)
+	repository.UpdateBook(bookid, &book)
 
-	if book.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "Book not found"})
-		return
-	}
-
-	db.Model(&book).Update("title", c.PostForm("title"))
-	db.Model(&book).Update("subtitle", c.PostForm("subtitle"))
-	db.Model(&book).Update("identifier", c.PostForm("identifier"))
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Successfully updated"})
 }
 
 func DeleteBook(c *gin.Context)  {
-	var book models.Book
-	bookid := c.Param("id")
-	db.First(&book, bookid)
+	bookid := getId(c)
+	repository.DeleteBook(bookid)
 
-	if book.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "Could not find book"})
-		return
-	}
-
-	db.Model(&book).Delete(&book, bookid)
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &book})
+}
+
+func getId(c *gin.Context) int64 {
+	bookid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	return bookid
 }
