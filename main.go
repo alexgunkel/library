@@ -14,8 +14,16 @@ func main()  {
 		vi.GET("/", controller.ListBooks)
 		vi.GET("/:id", controller.GetBook)
 		vi.POST("/", controller.CreateBook)
-		//vi.PUT("/:id", updateBook)
-		//vi.DELETE("/:id", deleteBook)
+		vi.PUT("/:id", controller.UpdateBook)
+		vi.DELETE("/:id", controller.DeleteBook)
+	}
+	author := router.Group("api/v1/authors")
+	{
+		author.GET("/", controller.ListAuthors)
+		author.GET("/:id", controller.GetAuthor)
+		author.POST("/", controller.CreateAuthor)
+		author.PUT("/:id", controller.UpdateAuthor)
+		author.DELETE("/:id", controller.DeleteAuthor)
 	}
 	router.Run()
 }
