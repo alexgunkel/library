@@ -21,7 +21,7 @@ func ListAuthors(c *gin.Context)  {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No authors found."})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": authors})
 }
 
