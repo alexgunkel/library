@@ -3,7 +3,6 @@ package repository
 import (
 	"github.com/alexgunkel/library/models"
 	"errors"
-	"strconv"
 	"fmt"
 )
 
@@ -46,8 +45,8 @@ func GetBookAuthors(id int64) ([]models.Author, error) {
 	return authors, nil
 }
 
-func AddAuthor(id int64, author *models.Author) error {
-	book, err := GetBookById(id)
+func AddBookAuthor(bookId int64, author *models.Author) error {
+	book, err := GetBookById(bookId)
 
 	if nil != err {
 		return err
@@ -75,4 +74,5 @@ func DeleteBook(id int64) error {
 	}
 
 	db.Delete(&book)
+	return nil
 }

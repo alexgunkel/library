@@ -55,7 +55,7 @@ func AddBookAuthor(c *gin.Context) {
 	c.Bind(&author)
 	bookid := getId(c)
 
-	err := repository.AddAuthor(bookid, &author)
+	err := repository.AddBookAuthor(bookid, &author)
 
 	if nil != err {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
