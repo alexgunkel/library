@@ -52,7 +52,7 @@ func AddBookAuthor(bookId int64, author *models.Author) error {
 		return err
 	}
 
-	db.Model(&book).Association("authors").Append(author)
+	db.Model(&book).Association("Authors").Append(author)
 
 	return nil
 }

@@ -35,11 +35,10 @@ func GetAuthorBooks(id int64) ([]models.Book, error) {
 		return nil, err
 	}
 
-
-	db.Model(&author).Related(&books, "Books")
+	db.Model(&author).Association("Books").Find(&books)
 
 	if len(books) <= 0 {
-		return nil, errors.New("No books found for author with " + fmt.Sprintf("%d", author.ID))
+		return nil, errors.New("No books found for author " + author.String() + " with ID " + fmt.Sprintf("%d", author.ID))
 	}
 
 	return books, nil
@@ -52,7 +51,7 @@ func AddAuthorBook(id int64, book *models.Book) error {
 		return err
 	}
 
-	db.Model(&author).Association("books").Append(book)
+	db.Model(&author).Association("Books").Append(book)
 
 	return nil
 }

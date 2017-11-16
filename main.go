@@ -23,6 +23,7 @@ func main()  {
 	{
 		author.GET("/", controller.ListAuthors)
 		author.GET("/:id", controller.GetAuthor)
+		author.GET("/:id/books", controller.GetAuthorBooks)
 		author.POST("/", controller.CreateAuthor)
 		author.PUT("/:id", controller.UpdateAuthor)
 		author.DELETE("/:id", controller.DeleteAuthor)

@@ -40,6 +40,18 @@ func GetAuthor(c *gin.Context)  {
 	ok(c, &author)
 }
 
+func GetAuthorBooks(c *gin.Context)  {
+	authorId := getId(c)
+	books, err := repository.GetAuthorBooks(authorId)
+
+	if nil != err {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
+		return
+	}
+
+	ok(c, &books)
+}
+
 func UpdateAuthor(c *gin.Context)  {
 	var author models.Author
 	authorid := getId(c)
