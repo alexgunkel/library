@@ -9,9 +9,13 @@ import (
 
 func CreateAuthor(c *gin.Context)  {
 	var author models.Author
-	c.Bind(&author)
-	repository.AddAuthor(&author)
-	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "Author item created successfully!", "data": author})
+	err := c.Bind(&author)
+	if nil != err {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
+		return
+	}
+	go repository.AddAuthor(&author)
+	ok(c, &author)
 }
 
 func ListAuthors(c *gin.Context)  {
@@ -21,7 +25,7 @@ func ListAuthors(c *gin.Context)  {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": authors})
+	ok(c, &authors)
 }
 
 func GetAuthor(c *gin.Context)  {
@@ -33,16 +37,16 @@ func GetAuthor(c *gin.Context)  {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &author})
+	ok(c, &author)
 }
 
 func UpdateAuthor(c *gin.Context)  {
 	var author models.Author
 	authorid := getId(c)
 	c.Bind(&author)
-	repository.UpdateAuthor(authorid, &author)
+	go repository.UpdateAuthor(authorid, &author)
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Successfully updated"})
+	ok(c, &author)
 }
 
 func DeleteAuthor(c *gin.Context)  {

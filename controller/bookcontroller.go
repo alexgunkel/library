@@ -22,7 +22,7 @@ func ListBooks(c *gin.Context)  {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": books})
+	ok(c, &books)
 }
 
 func GetBook(c *gin.Context)  {
@@ -34,7 +34,7 @@ func GetBook(c *gin.Context)  {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &book})
+	ok(c, &book)
 }
 
 func GetBookAuthors(c *gin.Context)  {
@@ -46,7 +46,7 @@ func GetBookAuthors(c *gin.Context)  {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &authors})
+	ok(c, &authors)
 }
 
 func AddBookAuthor(c *gin.Context) {
@@ -60,6 +60,8 @@ func AddBookAuthor(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": err.Error()})
 		return
 	}
+
+	ok(c, &author)
 }
 
 func UpdateBook(c *gin.Context)  {
