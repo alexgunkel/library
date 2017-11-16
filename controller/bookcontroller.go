@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"github.com/alexgunkel/library/models"
 	"github.com/alexgunkel/library/repository"
-	"strconv"
 )
 
 func CreateBook(c *gin.Context)  {
@@ -76,10 +75,5 @@ func DeleteBook(c *gin.Context)  {
 	bookid := getId(c)
 	repository.DeleteBook(bookid)
 
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &book})
-}
-
-func getId(c *gin.Context) int64 {
-	bookid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	return bookid
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK})
 }
